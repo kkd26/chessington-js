@@ -1,35 +1,18 @@
-import Piece from "./piece";
-import Square from "../square";
+import OneStepPiece from "./oneStepPiece";
 
-export default class Knight extends Piece {
+export default class Knight extends OneStepPiece {
     constructor(player) {
         super(player);
     }
-
-    getAvailableMoves(board) {
-        const currentSquare = board.findPiece(this);
-        const { row, col } = currentSquare;
-
-        const availableMoves = [];
-
-        const directions = [
-            [1, 2],
-            [-1, 2],
-            [-1, -2],
-            [1, -2],
-            [2, 1],
-            [-2, 1],
-            [-2, -1],
-            [2, -1],
-        ];
-
-        for (const direction of directions) {
-            const newRow = row + direction[0];
-            const newCol = col + direction[1];
-            const newSquare = Square.at(newRow, newCol);
-
-            if (board.isEmpty(newSquare) || board.canBeTaken(newSquare)) availableMoves.push(newSquare);
-        }
-        return availableMoves;
-    }
 }
+
+Knight.prototype.directions = [
+    [1, 2],
+    [-1, 2],
+    [-1, -2],
+    [1, -2],
+    [2, 1],
+    [-2, 1],
+    [-2, -1],
+    [2, -1],
+];
