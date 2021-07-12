@@ -13,20 +13,20 @@ export default class Bishop extends Piece {
 
         const availableMoves = [];
 
-        const diagonals = [
+        const directions = [
             [1, 1],
             [1, -1],
             [-1, 1],
             [-1, -1],
         ];
 
-        for (const direction of diagonals) {
+        for (const direction of directions) {
             for (var i = 1; i < GameSettings.BOARD_SIZE; i++) {
                 const newRow = row + i * direction[0];
                 const newCol = col + i * direction[1];
                 const newSquare = Square.at(newRow, newCol);
 
-                if (board.hasSquare(newSquare)) availableMoves.push(newSquare);
+                if (board.isInBounds(newSquare)) availableMoves.push(newSquare);
             }
         }
         return availableMoves;

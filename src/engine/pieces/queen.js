@@ -29,7 +29,7 @@ export default class Queen extends Piece {
                 const newCol = col + i * direction[1];
                 const newSquare = Square.at(newRow, newCol);
 
-                if (board.hasSquare(newSquare)) {
+                if (board.isInBounds(newSquare)) {
                     availableMoves.push(newSquare);
                 } else {
                     break;

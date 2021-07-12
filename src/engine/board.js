@@ -25,7 +25,7 @@ export default class Board {
     }
 
     isEmpty(square) {
-        return this.getPiece(square) === undefined;
+        return this.isInBounds(square) && this.getPiece(square) === undefined;
     }
 
     findPiece(pieceToFind) {
@@ -51,7 +51,7 @@ export default class Board {
         }
     }
 
-    hasSquare({ row, col }) {
+    isInBounds({ row, col }) {
         return (
             row >= 0 &&
             row < GameSettings.BOARD_SIZE &&

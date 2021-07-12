@@ -13,14 +13,26 @@ export default class Rook extends Piece {
 
         const availableMoves = [];
 
-        for (var i = 0; i < GameSettings.BOARD_SIZE; i++) {
-            if (i != col) availableMoves.push(Square.at(row, i));
-        }
+        const directions = [
+            [0, 1],
+            [0, -1],
+            [1, 0],
+            [-1, 0],
+        ];
 
-        for (var i = 0; i < GameSettings.BOARD_SIZE; i++) {
-            if (i != row) availableMoves.push(Square.at(i, col));
-        }
+        for (const direction of directions) {
+            for (var i = 1; ; i++) {
+                const newRow = row + i * direction[0];
+                const newCol = col + i * direction[1];
+                const newSquare = Square.at(newRow, newCol);
 
+                if (board.isEmpty(newSquare)) {
+                    availableMoves.push(newSquare);
+                } else {
+                    break;
+                }
+            }
+        }
         return availableMoves;
     }
 }
