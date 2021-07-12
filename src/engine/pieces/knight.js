@@ -28,7 +28,7 @@ export default class Knight extends Piece {
             const newCol = col + direction[1];
             const newSquare = Square.at(newRow, newCol);
 
-            if (board.isInBounds(newSquare)) availableMoves.push(newSquare);
+            if (board.isEmpty(newSquare) || board.canBeTaken(newSquare)) availableMoves.push(newSquare);
         }
         return availableMoves;
     }
