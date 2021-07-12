@@ -1,4 +1,6 @@
-import Piece from './piece';
+import Piece from "./piece";
+import Square from "../square";
+import GameSettings from "../gameSettings";
 
 export default class Bishop extends Piece {
     constructor(player) {
@@ -6,6 +8,27 @@ export default class Bishop extends Piece {
     }
 
     getAvailableMoves(board) {
-        return new Array(0);
+        const currentSquare = board.findPiece(this);
+        const { row, col } = currentSquare;
+
+        const availableMoves = [];
+
+        const diagonals = [
+            [1, 1],
+            [1, -1],
+            [-1, 1],
+            [-1, -1],
+        ];
+
+        for (const direction of diagonals) {
+            for (var i = 1; i < GameSettings.BOARD_SIZE; i++) {
+                const newRow = row + i * direction[0];
+                const newCol = col + i * direction[1];
+                const newSquare = Square.at(newRow, newCol);
+
+                if (board.hasSquare(newSquare)) availableMoves.push(newSquare);
+            }
+        }
+        return availableMoves;
     }
 }
