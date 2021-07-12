@@ -26,7 +26,11 @@ export default class Bishop extends Piece {
                 const newCol = col + i * direction[1];
                 const newSquare = Square.at(newRow, newCol);
 
-                if (board.isInBounds(newSquare)) availableMoves.push(newSquare);
+                if (board.isEmpty(newSquare)) {
+                    availableMoves.push(newSquare);
+                } else {
+                    break;
+                }
             }
         }
         return availableMoves;
