@@ -9,13 +9,20 @@ export default class Pawn extends Piece {
 
     getAvailableMoves(board) {
         const currentSquare = board.findPiece(this);
+        const { row, col } = currentSquare;
 
-        const direction = this.player == Player.WHITE ? 1 : -1;
-        const newSquare = Square.at(
-            currentSquare.row + direction,
-            currentSquare.col
-        );
+        const isWhite = this.player == Player.WHITE;
+        const isFirst = (isWhite && row == 1) || (!isWhite && row == 6);
+        const direction = isWhite ? 1 : -1;
 
-        return [newSquare];
+        const out = [];
+
+        const moveByOne = Square.at(row + direction, col);
+        const moveByTwo = Square.at(row + 2 * direction, col);
+
+        out.push(moveByOne);
+        if (isFirst) out.push(moveByTwo);
+
+        return out;
     }
 }
