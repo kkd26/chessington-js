@@ -20,8 +20,11 @@ export default class Pawn extends Piece {
         const moveByOne = Square.at(row + direction, col);
         const moveByTwo = Square.at(row + 2 * direction, col);
 
-        availableMoves.push(moveByOne);
-        if (isFirst) availableMoves.push(moveByTwo);
+        if (board.isEmpty(moveByOne)) {
+            availableMoves.push(moveByOne);
+            if (isFirst && board.isEmpty(moveByTwo))
+                availableMoves.push(moveByTwo);
+        }
 
         return availableMoves;
     }
