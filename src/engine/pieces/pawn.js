@@ -31,6 +31,18 @@ export default class Pawn extends Piece {
             if (board.canBeTaken(takingSquare)) {
                 availableMoves.push(takingSquare);
             }
+
+            const enPassantSquare = Square.at(row, col + colOffset);
+            if (board.canBeTaken(enPassantSquare)) {
+                const enPassantPiece = board.getPiece(enPassantSquare);
+                if (
+                    enPassantPiece instanceof Pawn &&
+                    enPassantPiece.lastMoved === board.time &&
+                    enPassantPiece.numberOfMoves === 1
+                ) {
+                    availableMoves.push(takingSquare);
+                }
+            } 
         }
 
         return availableMoves;

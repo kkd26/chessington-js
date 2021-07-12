@@ -2,11 +2,13 @@ import Player from "./player";
 import GameSettings from "./gameSettings";
 import Square from "./square";
 import King from "./pieces/king";
+import Pawn from "./pieces/pawn";
 
 export default class Board {
     constructor(currentPlayer) {
         this.currentPlayer = currentPlayer ? currentPlayer : Player.WHITE;
         this.board = this.createBoard();
+        this.time = 0;
     }
 
     createBoard() {
@@ -39,13 +41,24 @@ export default class Board {
     movePiece(fromSquare, toSquare) {
         const movingPiece = this.getPiece(fromSquare);
         if (!!movingPiece && movingPiece.player === this.currentPlayer) {
+            if(this.isEnPassantMove(fromSquare, toSquare)){
+                const enPassantTakenSquare = Square.at(fromSquare.row, toSquare.col);
+                this.setPiece(enPassantTakenSquare, undefined);
+            }
             this.setPiece(toSquare, movingPiece);
             this.setPiece(fromSquare, undefined);
             this.currentPlayer =
                 this.currentPlayer === Player.WHITE
                     ? Player.BLACK
                     : Player.WHITE;
+            movingPiece.lastMoved = ++this.time;
+            movingPiece.numberOfMoves++;
         }
+    }
+
+    isEnPassantMove(fromSquare, toSquare){
+        const movingPiece = this.getPiece(fromSquare);
+        return movingPiece instanceof Pawn && toSquare.col != fromSquare.col && !this.getPiece(toSquare);
     }
 
     isInBounds({ row, col }) {
