@@ -26,6 +26,13 @@ export default class Pawn extends Piece {
                 availableMoves.push(moveByTwo);
         }
 
+        for (var colOffset of [-1, 1]) {
+            const takingSquare = Square.at(row + direction, col + colOffset);
+            if (board.canBeTaken(takingSquare)) {
+                availableMoves.push(takingSquare);
+            }
+        }
+
         return availableMoves;
     }
 }
