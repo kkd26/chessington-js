@@ -1,40 +1,41 @@
-import 'chai/register-should';
-import Pawn from '../../../src/engine/pieces/pawn';
-import Rook from '../../../src/engine/pieces/rook';
-import King from '../../../src/engine/pieces/king';
-import Board from '../../../src/engine/board';
-import Player from '../../../src/engine/player';
-import Square from '../../../src/engine/square';
+import "chai/register-should";
+import Pawn from "../../../src/engine/pieces/pawn";
+import Rook from "../../../src/engine/pieces/rook";
+import King from "../../../src/engine/pieces/king";
+import Board from "../../../src/engine/board";
+import Player from "../../../src/engine/player";
+import Square from "../../../src/engine/square";
 
-describe('Pawn', () => {
-
+describe("Pawn", () => {
     let board;
-    beforeEach(() => board = new Board());
+    beforeEach(() => (board = new Board()));
 
-    describe('white pawns', () => {
-        
-        it('can only move one square up if they have already moved', () => {
+    describe("white pawns", () => {
+        it("can only move one square up if they have already moved", () => {
             const pawn = new Pawn(Player.WHITE);
             board.setPiece(Square.at(1, 0), pawn);
             pawn.moveTo(board, Square.at(2, 0));
 
             const moves = pawn.getAvailableMoves(board);
-            
+
             moves.should.have.length(1);
             moves.should.deep.include(Square.at(3, 0));
         });
 
-        it('can move one or two squares up on their first move', () => {
+        it("can move one or two squares up on their first move", () => {
             const pawn = new Pawn(Player.WHITE);
             board.setPiece(Square.at(1, 7), pawn);
 
             const moves = pawn.getAvailableMoves(board);
 
             moves.should.have.length(2);
-            moves.should.deep.include.members([Square.at(2, 7), Square.at(3, 7)]);
+            moves.should.deep.include.members([
+                Square.at(2, 7),
+                Square.at(3, 7),
+            ]);
         });
 
-        it('cannot move at the top of the board', () => {
+        it("cannot move at the top of the board", () => {
             const pawn = new Pawn(Player.WHITE);
             board.setPiece(Square.at(7, 3), pawn);
 
@@ -43,7 +44,7 @@ describe('Pawn', () => {
             moves.should.be.empty;
         });
 
-        it('can move diagonally if there is a piece to take', () => {
+        it("can move diagonally if there is a piece to take", () => {
             const pawn = new Pawn(Player.WHITE);
             const opposingPiece = new Rook(Player.BLACK);
             board.setPiece(Square.at(4, 4), pawn);
@@ -54,7 +55,7 @@ describe('Pawn', () => {
             moves.should.deep.include(Square.at(5, 3));
         });
 
-        it('cannot move diagonally if there is no piece to take', () => {
+        it("cannot move diagonally if there is no piece to take", () => {
             const pawn = new Pawn(Player.WHITE);
             board.setPiece(Square.at(4, 4), pawn);
 
@@ -63,7 +64,7 @@ describe('Pawn', () => {
             moves.should.not.deep.include(Square.at(5, 3));
         });
 
-        it('cannot take a friendly piece', () => {
+        it("cannot take a friendly piece", () => {
             const pawn = new Pawn(Player.WHITE);
             const friendlyPiece = new Rook(Player.WHITE);
             board.setPiece(Square.at(4, 4), pawn);
@@ -74,7 +75,7 @@ describe('Pawn', () => {
             moves.should.not.deep.include(Square.at(5, 3));
         });
 
-        it('cannot take the opposing king', () => {
+        it("cannot take the opposing king", () => {
             const pawn = new Pawn(Player.WHITE);
             const opposingKing = new King(Player.BLACK);
             board.setPiece(Square.at(4, 4), pawn);
@@ -85,35 +86,99 @@ describe('Pawn', () => {
             moves.should.not.deep.include(Square.at(5, 3));
         });
 
+        it("can move to take en passant", () => {
+            board = new Board(Player.BLACK);
+            const wPawn = new Pawn(Player.WHITE);
+            const bPawn = new Pawn(Player.BLACK);
+            board.setPiece(Square.at(4, 4), wPawn);
+            board.setPiece(Square.at(6, 5), bPawn);
+            bPawn.moveTo(board, Square.at(4, 5));
+
+            const moves = wPawn.getAvailableMoves(board);
+
+            moves.should.deep.include(Square.at(5, 5));
+        });
+
+        it("removes other pawn when taking en passant", () => {
+            board = new Board(Player.BLACK);
+            const wPawn = new Pawn(Player.WHITE);
+            const bPawn = new Pawn(Player.BLACK);
+            board.setPiece(Square.at(4, 4), wPawn);
+            board.setPiece(Square.at(6, 5), bPawn);
+            bPawn.moveTo(board, Square.at(4, 5));
+            wPawn.moveTo(board, Square.at(5, 5));
+
+            const cellContent = board.getPiece(Square.at(4, 5));
+
+            should.equal(cellContent, undefined);
+        });
+
+        it("cannot move to take en passant if black pawn moved 1 step", () => {
+            board = new Board(Player.BLACK);
+            const wPawn = new Pawn(Player.WHITE);
+            const bPawn = new Pawn(Player.BLACK);
+            board.setPiece(Square.at(3, 4), wPawn);
+            board.setPiece(Square.at(6, 5), bPawn);
+            bPawn.moveTo(board, Square.at(5, 5));
+            wPawn.moveTo(board, Square.at(4, 4));
+            bPawn.moveTo(board, Square.at(4, 5));
+
+            const moves = wPawn.getAvailableMoves(board);
+
+            moves.should.not.deep.include(Square.at(5, 5));
+        });
+
+        it("cannot take en passant if too late", () => {
+            // Arrange
+            board = new Board(Player.BLACK);
+            const wPawn = new Pawn(Player.WHITE);
+            const bPawn1 = new Pawn(Player.BLACK);
+            const bPawn2 = new Pawn(Player.BLACK);
+            board.setPiece(Square.at(3, 4), wPawn);
+            board.setPiece(Square.at(6, 5), bPawn1);
+            board.setPiece(Square.at(6, 1), bPawn2);
+
+            // Act
+            bPawn1.moveTo(board, Square.at(4, 5));
+            wPawn.moveTo(board, Square.at(4, 4));
+            bPawn2.moveTo(board, Square.at(4, 1));
+
+            const moves = wPawn.getAvailableMoves(board);
+
+            // Assert
+            moves.should.not.deep.include(Square.at(5, 5));
+        });
     });
 
-    describe('black pawns', () => {
-
+    describe("black pawns", () => {
         let board;
-        beforeEach(() => board = new Board(Player.BLACK));    
-        
-        it('can only move one square down if they have already moved', () => {
+        beforeEach(() => (board = new Board(Player.BLACK)));
+
+        it("can only move one square down if they have already moved", () => {
             const pawn = new Pawn(Player.BLACK);
             board.setPiece(Square.at(6, 0), pawn);
             pawn.moveTo(board, Square.at(5, 0));
 
             const moves = pawn.getAvailableMoves(board);
-            
+
             moves.should.have.length(1);
             moves.should.deep.include(Square.at(4, 0));
         });
 
-        it('can move one or two squares down on their first move', () => {
+        it("can move one or two squares down on their first move", () => {
             const pawn = new Pawn(Player.BLACK);
             board.setPiece(Square.at(6, 7), pawn);
 
             const moves = pawn.getAvailableMoves(board);
 
             moves.should.have.length(2);
-            moves.should.deep.include.members([Square.at(4, 7), Square.at(5, 7)]);
+            moves.should.deep.include.members([
+                Square.at(4, 7),
+                Square.at(5, 7),
+            ]);
         });
 
-        it('cannot move at the bottom of the board', () => {
+        it("cannot move at the bottom of the board", () => {
             const pawn = new Pawn(Player.BLACK);
             board.setPiece(Square.at(0, 3), pawn);
 
@@ -122,7 +187,7 @@ describe('Pawn', () => {
             moves.should.be.empty;
         });
 
-        it('can move diagonally if there is a piece to take', () => {
+        it("can move diagonally if there is a piece to take", () => {
             const pawn = new Pawn(Player.BLACK);
             const opposingPiece = new Rook(Player.WHITE);
             board.setPiece(Square.at(4, 4), pawn);
@@ -133,7 +198,7 @@ describe('Pawn', () => {
             moves.should.deep.include(Square.at(3, 3));
         });
 
-        it('cannot move diagonally if there is no piece to take', () => {
+        it("cannot move diagonally if there is no piece to take", () => {
             const pawn = new Pawn(Player.BLACK);
             board.setPiece(Square.at(4, 4), pawn);
 
@@ -142,7 +207,7 @@ describe('Pawn', () => {
             moves.should.not.deep.include(Square.at(3, 3));
         });
 
-        it('cannot take a friendly piece', () => {
+        it("cannot take a friendly piece", () => {
             const pawn = new Pawn(Player.BLACK);
             const friendlyPiece = new Rook(Player.BLACK);
             board.setPiece(Square.at(4, 4), pawn);
@@ -153,7 +218,7 @@ describe('Pawn', () => {
             moves.should.not.deep.include(Square.at(3, 3));
         });
 
-        it('cannot take the opposing king', () => {
+        it("cannot take the opposing king", () => {
             const pawn = new Pawn(Player.BLACK);
             const opposingKing = new King(Player.WHITE);
             board.setPiece(Square.at(4, 4), pawn);
@@ -165,7 +230,7 @@ describe('Pawn', () => {
         });
     });
 
-    it('cannot move if there is a piece in front', () => {
+    it("cannot move if there is a piece in front", () => {
         const pawn = new Pawn(Player.BLACK);
         const blockingPiece = new Rook(Player.WHITE);
         board.setPiece(Square.at(6, 3), pawn);
@@ -176,7 +241,7 @@ describe('Pawn', () => {
         moves.should.be.empty;
     });
 
-    it('cannot move two squares if there is a piece two sqaures in front', () => {
+    it("cannot move two squares if there is a piece two sqaures in front", () => {
         const pawn = new Pawn(Player.BLACK);
         const blockingPiece = new Rook(Player.WHITE);
         board.setPiece(Square.at(6, 3), pawn);
@@ -186,5 +251,4 @@ describe('Pawn', () => {
 
         moves.should.not.deep.include(Square.at(4, 3));
     });
-
 });
