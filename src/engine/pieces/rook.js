@@ -28,6 +28,9 @@ export default class Rook extends Piece {
 
                 if (board.isEmpty(newSquare)) {
                     availableMoves.push(newSquare);
+                } else if (board.canBeTaken(newSquare)) {
+                    availableMoves.push(newSquare);
+                    break;
                 } else {
                     break;
                 }

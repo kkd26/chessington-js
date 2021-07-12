@@ -1,6 +1,7 @@
 import Player from "./player";
 import GameSettings from "./gameSettings";
 import Square from "./square";
+import King from "./pieces/king";
 
 export default class Board {
     constructor(currentPlayer) {
@@ -22,10 +23,6 @@ export default class Board {
 
     getPiece(square) {
         return this.board[square.row][square.col];
-    }
-
-    isEmpty(square) {
-        return this.isInBounds(square) && this.getPiece(square) === undefined;
     }
 
     findPiece(pieceToFind) {
@@ -58,5 +55,19 @@ export default class Board {
             col >= 0 &&
             col < GameSettings.BOARD_SIZE
         );
+    }
+
+    isEmpty(square) {
+        return this.isInBounds(square) && this.getPiece(square) === undefined;
+    }
+
+    canBeTaken(square) {
+        if (!this.isInBounds(square) || this.isEmpty(square)) return false;
+
+        const piece = this.getPiece(square);
+
+        if (piece instanceof King) return false;
+
+        return piece.player !== this.currentPlayer;
     }
 }
