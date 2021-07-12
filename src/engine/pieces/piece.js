@@ -1,3 +1,5 @@
+import Player from "../player";
+
 export default class Piece {
     constructor(player) {
         this.player = player;
@@ -6,11 +8,25 @@ export default class Piece {
     }
 
     getAvailableMoves(board) {
-        throw new Error('This method must be implemented, and return a list of available moves');
+        throw new Error(
+            "This method must be implemented, and return a list of available moves"
+        );
     }
 
     moveTo(board, newSquare) {
         const currentSquare = board.findPiece(this);
         board.movePiece(currentSquare, newSquare);
+    }
+
+    getLetter() {
+        throw new Error(
+            "This method must be implemented, and return a list of available moves"
+        );
+    }
+
+    getName() {
+        const letter = this.letter;
+        if (this.player === Player.WHITE) return letter.toUpperCase();
+        return letter;
     }
 }

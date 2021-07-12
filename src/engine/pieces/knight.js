@@ -16,3 +16,5 @@ Knight.prototype.directions = [
     [-2, -1],
     [2, -1],
 ];
+
+Knight.prototype.letter = "n";

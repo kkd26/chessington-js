@@ -48,3 +48,5 @@ export default class Pawn extends Piece {
         return availableMoves;
     }
 }
+
+Pawn.prototype.letter = "p";

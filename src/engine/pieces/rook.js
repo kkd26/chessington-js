@@ -12,3 +12,5 @@ Rook.prototype.directions = [
     [1, 0],
     [-1, 0],
 ];
+
+Rook.prototype.letter = "r";

@@ -12,3 +12,5 @@ Bishop.prototype.directions = [
     [-1, 1],
     [-1, -1],
 ];
+
+Bishop.prototype.letter = "b";

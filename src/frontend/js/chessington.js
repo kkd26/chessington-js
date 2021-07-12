@@ -70,6 +70,9 @@ function onDrop(source, target) {
     }
     pieceToMove.moveTo(board, toSquare);
     updateStatus();
+    const fen = board.getFen();
+    const fen1 = boardUI.fen();
+    console.log(fen, fen1);
 }
 
 function updateStatus() {

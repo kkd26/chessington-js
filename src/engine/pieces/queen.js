@@ -16,3 +16,5 @@ Queen.prototype.directions = [
     [-1, 1],
     [0, 1],
 ];
+
+Queen.prototype.letter = "q";

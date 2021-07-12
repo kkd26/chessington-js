@@ -83,4 +83,26 @@ export default class Board {
 
         return piece.player !== this.currentPlayer;
     }
+
+    getFen(){
+        let numOfEmptySquares = 0;
+        let fen = "";
+        for (const row of this.board.reverse()) {
+            for (const piece of row) {
+                if(!piece) numOfEmptySquares++;
+                else{
+                    if(numOfEmptySquares !== 0) fen += numOfEmptySquares;
+                    const pieceName = piece.getName();
+                    fen += pieceName;
+                    numOfEmptySquares = 0;
+                }
+            }
+            if(numOfEmptySquares !== 0){
+                fen += numOfEmptySquares;
+                numOfEmptySquares = 0;
+            }
+            fen += "/";
+        }
+        return fen;
+    }
 }

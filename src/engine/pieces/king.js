@@ -16,3 +16,5 @@ King.prototype.directions = [
     [-1, 1],
     [0, 1],
 ];
+
+King.prototype.letter = "k";
